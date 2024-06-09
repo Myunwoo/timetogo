@@ -1,36 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { useQuery, gql } from '@apollo/client';
-
-const GET_INFOS = gql`
-  query GetInfos {
-    infos {
-      id
-      title
-      description
-    }
-  }
-`;
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase/firebaseConfig';
 
 const InfoScreen = () => {
-  const { loading, error, data } = useQuery(GET_INFOS);
+  const [loading, setLoading] = useState(true);
+  const [infoData, setInfoData] = useState<{ id: string; title: string; description: string; }[]>([]);
 
-  if (loading) return (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" />
-    </View>
-  );
+  useEffect(() => {
+    const fetchInfoData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'info'));
+        const data = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as { id: string; title: string; description: string; }[];
+        setInfoData(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching info data:', error);
+        setLoading(false);
+      }
+    };
 
-  if (error) return (
-    <View style={styles.container}>
-      <Text>Error: {error.message}</Text>
-    </View>
-  );
+    fetchInfoData();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Info Screen</Text>
-      {data.infos.map((item: { id: string; title: string; description: string }) => (
+      {infoData.map(item => (
         <View key={item.id} style={styles.item}>
           <Text style={styles.itemTitle}>{item.title}</Text>
           <Text>{item.description}</Text>
