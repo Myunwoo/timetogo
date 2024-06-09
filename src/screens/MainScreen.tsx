@@ -1,7 +1,14 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types/navigation';
+import { useNavigation } from '@react-navigation/native';
 
-const MainScreen = ({ navigation }) => {
+type MainScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
+
+const MainScreen = () => {
+  const navigation = useNavigation<MainScreenNavigationProp>();
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Main Screen</Text>

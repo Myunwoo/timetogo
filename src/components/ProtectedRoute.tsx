@@ -4,7 +4,11 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import { AuthScreenNavigationProp } from '../types/navigation';
 
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+interface ProtectedRouteProps {
+  children: React.ReactElement;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
   const navigation = useNavigation<AuthScreenNavigationProp>();
 
@@ -26,7 +30,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
     return null; // 로그인 화면으로 리다이렉트
   }
 
-  return children;
+  return React.cloneElement(children, { navigation });
 };
 
 export default ProtectedRoute;

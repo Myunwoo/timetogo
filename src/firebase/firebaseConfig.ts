@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 import { initializeAuth, browserSessionPersistence } from 'firebase/auth';
 
 import {
@@ -26,6 +27,7 @@ const auth = initializeAuth(app, {
   popupRedirectResolver: undefined,
 });
 
+const db = getFirestore(app);
 
-export { auth };
+export { auth, db };
 export default app;
